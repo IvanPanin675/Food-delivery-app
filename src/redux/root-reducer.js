@@ -6,6 +6,7 @@ import storage from 'redux-persist/lib/storage';
 import authReducer from './auth/authSlice';
 import shopsReducer from './shopsSlice/shopsSlice';
 import productsSlice from './products/productsSlice';
+import ordersSlice from './orders/ordersSlice';
 
 
 
@@ -21,4 +22,5 @@ export const rootReducer = combineReducers({
   auth: persistedAuthReducer,
   shops: shopsReducer,
   products: productsSlice,
+  orders: ordersSlice,
 });

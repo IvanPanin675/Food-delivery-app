@@ -5,10 +5,13 @@ import { fetchAllShops } from "../../redux/shopsSlice/shopsOperations";
 import { fetchProducts } from "../../redux/products/productsOperations";
 import { selectProducts } from "../../redux/products/productsSelector";
 
-import styles from "./Shops.module.css"
+import styles from "./Shops.module.css";
+import { deleteProducts, setProducts, setShop } from "../../redux/orders/ordersSlice";
+import { orderProduct } from "../../redux/orders/ordersSelector";
 
 const Shops = () => {
   const [selectedShop, setSelectedShop] = useState(null);
+  const [takedProduct, setTakedProduct] = useState([]);
 
   const dispatch = useDispatch();
 
@@ -25,8 +28,10 @@ const Shops = () => {
   const shopItem = shops.map((shop) => {
     return (
       <li key={shop._id}>
-        <button className={styles.buttonShop}
+        <button
+          className={styles.buttonShop}
           onClick={() => {
+            dispatch(setShop(shop.name));
             setSelectedShop(shop._id);
           }}
         >
@@ -37,15 +42,52 @@ const Shops = () => {
   });
 
   const products = useSelector(selectProducts);
+  const orProd = useSelector(orderProduct);
+  console.log("order:",orProd);
+
+  const handlTakeProd = (data) => {
+    dispatch(setProducts(data));
+    setTakedProduct([...takedProduct, data._id]);
+  };
+
+    const handlDeleteProd = (data) => {
+      dispatch(deleteProducts(data))
+    takedProduct.splice(takedProduct.indexOf(data._id), 1);
+    setTakedProduct(takedProduct.filter(item => item._id !== data._id));
+  };
 
   const productItems = products.map((product) => {
     return (
-        <li className={styles.productLi} key={product._id}>
-        <div className={styles.imgP} style={{backgroundImage: `url(${product.imgProd})`, backgroundRepeat: "no-repeat", backgroundSize: "cover", backgroundPosition: "center"}}></div>
+      <li className={styles.productLi} key={product._id}>
+        <div
+          className={styles.imgP}
+          style={{
+            backgroundImage: `url(${product.imgProd})`,
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        ></div>
 
         <p className={styles.productP}>{product.nameProduct}</p>
-        <p className={styles.productP}>{product.price}</p>
-        <button className={styles.productBtn}>Add</button>
+        <p className={styles.productP}>Price: {product.price} $</p>
+        {takedProduct.includes(product._id) ? (
+          <button
+            className={styles.productBtn}
+            onClick={() => handlDeleteProd(product)}
+          >
+            Delete
+          </button>
+        ) : (
+          <button
+            className={styles.productBtn}
+            onClick={() => {
+              handlTakeProd(product);
+            }}
+          >
+            Add
+          </button>
+        )}
       </li>
     );
   });
@@ -54,7 +96,10 @@ const Shops = () => {
     <div className={styles.container}>
       <div className={styles.containerShop}>
         <p>Shops:</p>
-        {shopItem && <ul className={styles.shopUl}>{shopItem}</ul>}
+        {shopItem && takedProduct.length === 0 && (
+          <ul className={styles.shopUl}>{shopItem}</ul>
+        )}
+        {takedProduct.length === 0 || <p>You are select shop</p>}
       </div>
       <div className={styles.containerProduct}>
         <p>Products:</p>

@@ -15,6 +15,11 @@ export const getProducts = async _id => {
   return data;
 }
 
+export const addOrder = async data => {
+  const { data: result } = await authInstance.post('/orders', data);
+  return result;
+}
+
 const setToken = token => {
   if (token) {
     return (authInstance.defaults.headers.authorization = `Bearer ${token}`);
