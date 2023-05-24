@@ -7,7 +7,6 @@ import { selectProducts } from "../../redux/products/productsSelector";
 
 import styles from "./Shops.module.css";
 import { deleteProducts, setProducts, setShop } from "../../redux/orders/ordersSlice";
-import { orderProduct } from "../../redux/orders/ordersSelector";
 
 const Shops = () => {
   const [selectedShop, setSelectedShop] = useState(null);
@@ -21,7 +20,7 @@ const Shops = () => {
 
   useEffect(() => {
     dispatch(fetchProducts(selectedShop));
-  }, [selectedShop]);
+  }, [selectedShop, dispatch]);
 
   const shops = useSelector(selectAllShops);
 
@@ -42,8 +41,6 @@ const Shops = () => {
   });
 
   const products = useSelector(selectProducts);
-  const orProd = useSelector(orderProduct);
-  console.log("order:",orProd);
 
   const handlTakeProd = (data) => {
     dispatch(setProducts(data));
