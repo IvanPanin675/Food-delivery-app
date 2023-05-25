@@ -6,23 +6,37 @@ import { fetchProducts } from "../../redux/products/productsOperations";
 import { selectProducts } from "../../redux/products/productsSelector";
 
 import styles from "./Shops.module.css";
-import { deleteProducts, setProducts, setShop } from "../../redux/orders/ordersSlice";
+import {
+  deleteProducts,
+  setProducts,
+  setShop,
+} from "../../redux/orders/ordersSlice";
+import { orderProduct } from "../../redux/orders/ordersSelector";
 
 const Shops = () => {
   const [selectedShop, setSelectedShop] = useState(null);
   const [takedProduct, setTakedProduct] = useState([]);
 
+  const { products: oProducts } = useSelector(orderProduct);
+
+
   const dispatch = useDispatch();
+  const shops = useSelector(selectAllShops);
+  const products = useSelector(selectProducts);
 
   useEffect(() => {
-    dispatch(fetchAllShops());
+    if (shops.length === 0) {
+      dispatch(fetchAllShops());
+    }
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(fetchProducts(selectedShop));
+    if (oProducts.length === 0) {
+      dispatch(fetchProducts(selectedShop));
+    } else {
+      setTakedProduct([...oProducts.map(oPro => oPro._id)])
+    }
   }, [selectedShop, dispatch]);
-
-  const shops = useSelector(selectAllShops);
 
   const shopItem = shops.map((shop) => {
     return (
@@ -40,17 +54,15 @@ const Shops = () => {
     );
   });
 
-  const products = useSelector(selectProducts);
-
   const handlTakeProd = (data) => {
     dispatch(setProducts(data));
     setTakedProduct([...takedProduct, data._id]);
   };
 
-    const handlDeleteProd = (data) => {
-      dispatch(deleteProducts(data))
+  const handlDeleteProd = (data) => {
+    dispatch(deleteProducts(data));
     takedProduct.splice(takedProduct.indexOf(data._id), 1);
-    setTakedProduct(takedProduct.filter(item => item._id !== data._id));
+    setTakedProduct(takedProduct.filter((item) => item._id !== data._id));
   };
 
   const productItems = products.map((product) => {
@@ -96,7 +108,7 @@ const Shops = () => {
         {shopItem && takedProduct.length === 0 && (
           <ul className={styles.shopUl}>{shopItem}</ul>
         )}
-        {takedProduct.length === 0 || <p>You are select shop</p>}
+        {takedProduct.length === 0 || <p>You have selected a store. If you want another store - click delete on the product</p>}
       </div>
       <div className={styles.containerProduct}>
         <p>Products:</p>

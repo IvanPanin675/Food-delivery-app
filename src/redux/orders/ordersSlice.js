@@ -25,12 +25,16 @@ const ordersSlice = createSlice({
     setProducts(store, { payload }) {
       store.orders.products.push(payload);
     },
-      deleteProducts(store, { payload }) {
+    deleteProducts(store, { payload }) {
       store.orders.products = store.orders.products.filter(
         (ob) => ob._id !== payload._id
       );
     },
+    setProductQuantity(store, { payload }) {
+      store.orders.products = store.orders.products.map((ob) => ob._id === payload._id ? {...ob, quantity: payload.quantity } : ob)
+    },
   },
+
   //   extraReducers: (builder) => {
   //     builder
   //       .addCase(fetchProducts.pending, (store) => {
@@ -48,5 +52,6 @@ const ordersSlice = createSlice({
   //   },
 });
 
-export const { setShop, setProducts, deleteProducts } = ordersSlice.actions;
+export const { setShop, setProducts, deleteProducts, setProductQuantity } =
+  ordersSlice.actions;
 export default ordersSlice.reducer;
