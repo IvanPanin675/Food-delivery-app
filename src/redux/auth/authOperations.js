@@ -28,39 +28,6 @@ export const login = createAsyncThunk(
   }
 );
 
-export const current = createAsyncThunk(
-  'auth/current',
-  async (_, { rejectWithValue, getState }) => {
-    try {
-      const { auth } = getState();
-      const data = await API.getCurrent(auth.token);
-      return data;
-    } catch ({ response }) {
-      return rejectWithValue(response);
-    }
-  },
-  {
-    condition: (_, { getState }) => {
-      const { auth } = getState();
-      if (!auth.token) {
-        return false;
-      }
-    },
-  }
-);
-
-export const editCurrent = createAsyncThunk(
-  'auth',
-  async (data, { rejectWithValue }) => {
-    try {
-      const result = await API.patchCurrent(data);
-      return result;
-    } catch ({ response }) {
-      return rejectWithValue(response.data);
-    }
-  }
-);
-
 export const logout = createAsyncThunk(
   'auth/logout',
   async (_, { rejectWithValue }) => {

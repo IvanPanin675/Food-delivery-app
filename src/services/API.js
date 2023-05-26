@@ -16,8 +16,16 @@ export const getProducts = async _id => {
 }
 
 export const addOrder = async data => {
+  
   const { data: result } = await authInstance.post('/orders', data);
+  console.log(result)
   return result;
+}
+
+export const getAllOrders = async () => {
+  const data = await authInstance.get('/orders');
+
+  return data;
 }
 
 const setToken = token => {
@@ -50,41 +58,8 @@ export const getCurrent = async token => {
   }
 };
 
-// export const patchCurrent = async (token, data) => {
-//   try {
-//     setToken(token);
-//     console.log("data_auth", data)
-//     const { data: result } = await authInstance.patch('/auth', data);
-//     return result;
-//   } catch (error) {
-//     setToken();
-//     throw error;
-//   }
-// };
-
-export const patchCurrent = async data => {
-  try {
-    // console.log('data_auth', data);
-    const { data: result } = await authInstance.patch('/auth', data);
-    return result;
-  } catch (error) {
-    throw error;
-  }
-};
-
 export const logout = async () => {
   const { data } = await authInstance.post('/auth/logout');
   setToken();
-  return data;
-};
-
-export const addUserPets = async data => {
-  const response = await authInstance.patch('/auth', { myPets: data });
-  const { myPets } = response.data;
-  return myPets;
-};
-
-export const toggleFavoriteNotice = async id => {
-  const { data } = await authInstance.patch('/auth', { favoriteNotice: id });
   return data;
 };

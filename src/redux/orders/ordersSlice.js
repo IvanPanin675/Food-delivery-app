@@ -1,25 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
-// import { fetchProducts } from "./productsOperations";
+import { addOrderOp } from "./ordersOperations";
 
-// const initialState = {
-//   order: {},
-//   isLoading: false,
-//   error: null,
-// };
+const initialState = {
+  orders: {
+    shop: "",
+    products: [],
+  },
+  isLoading: false,
+  error: null,
+};
 
 const ordersSlice = createSlice({
   name: "orders",
-  initialState: {
-    orders: {
-      shop: "",
-      products: [],
-    },
-    isLoading: false,
-    error: null,
-  },
+  initialState,
   reducers: {
     setShop(store, { payload }) {
-      console.log("setShop", payload);
       store.orders.shop = payload;
     },
     setProducts(store, { payload }) {
@@ -31,27 +26,42 @@ const ordersSlice = createSlice({
       );
     },
     setProductQuantity(store, { payload }) {
-      store.orders.products = store.orders.products.map((ob) => ob._id === payload._id ? {...ob, quantity: payload.quantity } : ob)
+      store.orders.products = store.orders.products.map((ob) =>
+        ob._id === payload._id ? { ...ob, quantity: payload.quantity } : ob
+      );
+    },
+    setPriceAll(store, { payload }) {
+      store.orders.priceAll = payload;
+    },
+    setCustumer(store, { payload }) {
+      store.orders = { ...store.orders, ...payload };
     },
   },
 
-  //   extraReducers: (builder) => {
-  //     builder
-  //       .addCase(fetchProducts.pending, (store) => {
-  //         store.isLoading = true;
-  //         store.error = null;
-  //       })
-  //       .addCase(fetchProducts.fulfilled, (store, { payload }) => {
-  //         store.isLoading = false;
-  //         store.items = payload;
-  //       })
-  //       .addCase(fetchProducts.rejected, (store, { payload }) => {
-  //         store.isLoading = false;
-  //         store.error = payload;
-  //       });
-  //   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(addOrderOp.pending, (store) => {
+        store.isLoading = true;
+        store.error = null;
+      })
+      .addCase(addOrderOp.fulfilled, (store, { payload }) => {
+        store.isLoading = false;
+        alert("You have successfully submitted your order. You can see orders by email:",payload)
+        store = initialState;
+      })
+      .addCase(addOrderOp.rejected, (store, { payload }) => {
+        store.isLoading = false;
+        store.error = payload;
+      });
+  },
 });
 
-export const { setShop, setProducts, deleteProducts, setProductQuantity } =
-  ordersSlice.actions;
+export const {
+  setShop,
+  setProducts,
+  deleteProducts,
+  setProductQuantity,
+  setPriceAll,
+  setCustumer,
+} = ordersSlice.actions;
 export default ordersSlice.reducer;

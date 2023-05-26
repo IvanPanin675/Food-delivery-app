@@ -1,20 +1,15 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { selectAllShops } from "../../redux/shopsSlice/shopsSelector";
-import { fetchAllShops } from "../../redux/shopsSlice/shopsOperations";
-import { fetchProducts } from "../../redux/products/productsOperations";
-import { selectProducts } from "../../redux/products/productsSelector";
 
 import styles from "./ShoppingCart.module.css";
 import {
-  deleteProducts,
+  setCustumer,
+  setPriceAll,
   setProductQuantity,
-  setProducts,
-  setShop,
 } from "../../redux/orders/ordersSlice";
 import { orderProduct } from "../../redux/orders/ordersSelector";
 import { useNavigate } from "react-router-dom";
-import { Wrapper, Status } from "@googlemaps/react-wrapper";
+import { addOrderOp } from "../../redux/orders/ordersOperations";
 
 const ShoppingCart = () => {
   const navigate = useNavigate();
@@ -22,7 +17,6 @@ const ShoppingCart = () => {
   const order = useSelector(orderProduct);
 
   const [products, setProducts] = useState([]);
-  console.log(products)
 
   useEffect(() => {
     if (order.products.length === 0) {
@@ -31,12 +25,30 @@ const ShoppingCart = () => {
     setProducts(order.products);
   }, [order]);
 
-  // const [quantity, setQuantity] = useState(1);
-
   const handleChange = (e, data) => {
-    dispatch(setProductQuantity({ quantity: Number(e.target.value) , _id:data }))
+    dispatch(
+      setProductQuantity({ quantity: Number(e.target.value), _id: data })
+    );
+  };
 
-  }
+  useEffect(() => {
+    if (products.length !== 0) {
+      dispatch(
+        setPriceAll(
+          products
+            .map((product) => {
+              return product.price * product.quantity;
+            })
+            .reduce((acc, prod) => {
+              acc += prod;
+              return acc;
+            })
+        )
+      );
+    } else {
+      dispatch(setPriceAll(0));
+    }
+  }, [handleChange]);
 
   const productItems = products.map((product) => {
     return (
@@ -62,42 +74,102 @@ const ShoppingCart = () => {
               max="10"
               value={product.quantity}
               step="1"
-              onChange={(e)=>handleChange(e,product._id)}
+              onChange={(e) => handleChange(e, product._id)}
             />
-            <p className={styles.productP}>Price for {product.quantity} products: {product.price * product.quantity} $</p>
+            <p className={styles.productP}>
+              Price for {product.quantity} products:{" "}
+              {product.price * product.quantity} $
+            </p>
           </label>
         </div>
       </li>
     );
   });
 
+  const onHandleChange = ({ target: { name, value } }) => {
+    switch (name) {
+      case "customerLocation":
+        dispatch(setCustumer({ customerLocation: value }));
+        break;
+      case "email":
+        dispatch(setCustumer({ owner: value }));
+        break;
+      case "customerPhone":
+        dispatch(setCustumer({ customerPhone: value }));
+        break;
+      case "customerName":
+        dispatch(setCustumer({ customerName: value }));
+        break;
+      default:
+        return;
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    dispatch(addOrderOp(order));
+  };
+
   return (
-    <form className={styles.container}>
+    <form onSubmit={handleSubmit} className={styles.container}>
       <div className={styles.containerShop}>
         <div></div>
         <ul className={styles.productUl}>
           <li className={styles.formLi}>
             <label className={styles.formLabel}>
               Address:
-              <input className={styles.formInput} type="text" name="address" placeholder="Address" />
+              <input
+                className={styles.formInput}
+                type="text"
+                name="customerLocation"
+                placeholder="Address"
+                value={order.customerLocation}
+                onChange={onHandleChange}
+                required
+              />
             </label>
           </li>
           <li className={styles.formLi}>
             <label className={styles.formLabel}>
               Email:
-              <input className={styles.formInput} type="text" name="email" placeholder="User email" />
+              <input
+                className={styles.formInput}
+                type="text"
+                name="email"
+                placeholder="User email"
+                value={order.owner}
+                onChange={onHandleChange}
+                required
+              />
             </label>
           </li>
           <li className={styles.formLi}>
             <label className={styles.formLabel}>
               Phone:
-              <input className={styles.formInput} type="text" name="phone" placeholder="Phone" />
+              <input
+                className={styles.formInput}
+                type="text"
+                name="customerPhone"
+                placeholder="Phone"
+                value={order.customerPhone}
+                onChange={onHandleChange}
+                required
+              />
             </label>
           </li>
           <li className={styles.formLi}>
             <label className={styles.formLabel}>
               Name:
-              <input className={styles.formInput} type="text" name="user" placeholder="Name" />
+              <input
+                className={styles.formInput}
+                type="text"
+                name="customerName"
+                placeholder="Name"
+                value={order.customerName}
+                onChange={onHandleChange}
+                required
+              />
             </label>
           </li>
         </ul>
@@ -107,9 +179,9 @@ const ShoppingCart = () => {
           <ul className={styles.productUl}>{productItems}</ul>
         </div>
         <div>
-          <p>Total price:</p>
+          <p>Total price: {order.priceAll} $</p>
           <button>Captcha</button>
-          <button type="submit">Submit</button>
+          <button>Submit</button>
         </div>
       </div>
     </form>

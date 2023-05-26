@@ -5,9 +5,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import {
   register,
   login,
-  current,
   logout,
-  editCurrent,
 } from './authOperations';
 
 const initialState = {
@@ -61,23 +59,6 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = payload;
       })
-      .addCase(current.pending, state => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(current.fulfilled, (state, { payload }) => {
-        const { user, token, pets } = payload;
-        state.loading = false;
-        state.user = user;
-        state.token = token;
-        state.isLogin = true;
-        state.pets = pets;
-      })
-      .addCase(current.rejected, (state, { payload }) => {
-        state.loading = false;
-        state.token = '';
-        state.error = payload;
-      })
       .addCase(logout.pending, state => {
         state.loading = true;
         state.error = null;
@@ -91,20 +72,6 @@ const authSlice = createSlice({
         state.pets = {};
       })
       .addCase(logout.rejected, (state, { payload }) => {
-        state.loading = false;
-        state.error = payload;
-      })
-      .addCase(editCurrent.pending, state => {
-        state.loading = true;
-        state.error = null;
-        
-      })
-      .addCase(editCurrent.fulfilled, (state, { payload }) => {
-        state.loading = false;
-        state.user = payload;
-        state.isLogin = true;
-      })
-      .addCase(editCurrent.rejected, (state, { payload }) => {
         state.loading = false;
         state.error = payload;
       })

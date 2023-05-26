@@ -26,6 +26,6 @@
   padding: 10px;
 }
 
-.navLi:last-child {
+.navLi:last-child { 
   border-right: none;
 }
