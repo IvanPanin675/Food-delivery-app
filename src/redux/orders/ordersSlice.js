@@ -52,7 +52,7 @@ const ordersSlice = createSlice({
       })
       .addCase(addOrderOp.fulfilled, (store, { payload }) => {
         store.isLoading = false;
-        alert("You have successfully submitted your order. You can see orders by email:",payload)
+        alert("You have successfully submitted your order. You can see orders by your email in page HISTORY")
       })
       .addCase(addOrderOp.rejected, (store, { payload }) => {
         store.isLoading = false;
