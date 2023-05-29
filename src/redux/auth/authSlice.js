@@ -6,6 +6,7 @@ import {
   register,
   login,
   logout,
+  findUserOp,
 } from './authOperations';
 
 const initialState = {
@@ -13,7 +14,6 @@ const initialState = {
   token: '',
   isLogin: false,
   loading: false,
-  pets: {},
   isRegistered: false,
   error: null,
 };
@@ -48,12 +48,11 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(login.fulfilled, (state, { payload }) => {
-        const { user, token, pets } = payload;
+        const { user, token } = payload;
         state.loading = false;
         state.user = user;
         state.token = token;
         state.isLogin = true;
-        state.pets = pets;
       })
       .addCase(login.rejected, (state, { payload }) => {
         state.loading = false;
@@ -69,9 +68,22 @@ const authSlice = createSlice({
         state.token = '';
         state.isLogin = false;
         state.isRegistered = false;
-        state.pets = {};
       })
       .addCase(logout.rejected, (state, { payload }) => {
+        state.loading = false;
+        state.error = payload;
+      })
+          .addCase(findUserOp.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(findUserOp.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.user = payload;
+        state.isLogin = false;
+        state.isRegistered = false;
+      })
+      .addCase(findUserOp.rejected, (state, { payload }) => {
         state.loading = false;
         state.error = payload;
       })

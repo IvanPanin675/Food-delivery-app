@@ -10,23 +10,37 @@ export const getAllShops = async () => {
   return data;
 };
 
+export const getDiskonts = async () => {
+  const { data } = await authInstance.get('/diskonts');
+  return data
+}
+
 export const getProducts = async _id => {
   const { data } = await authInstance.post('/products', _id);
   return data;
 }
 
 export const addOrder = async data => {
-  
   const { data: result } = await authInstance.post('/orders', data);
-  console.log(result)
   return result;
 }
 
-export const getAllOrders = async () => {
-  const data = await authInstance.get('/orders');
+
+export const getAllOrders = async emaPhon => {
+  const data = await authInstance.get('/orders', { params: emaPhon});
 
   return data;
 }
+
+export const findUserAPI = async email => {
+  console.log(email)
+  const data = await authInstance.get('/auth/user', { params: { email } });
+  console.log("findUserAPI result:",data)
+  return data
+}
+
+
+
 
 const setToken = token => {
   if (token) {
@@ -37,7 +51,9 @@ const setToken = token => {
 
 export const register = async data => {
   const { data: result } = await authInstance.post('/auth/register', data);
-  setToken(result.token);
+  if (!data.password) {
+    setToken(result.token);
+  }
   return result;
 };
 

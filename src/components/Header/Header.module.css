@@ -5,27 +5,26 @@
 
   margin: 0 auto;
 
-  padding: 20px 0;
-
+ 
   background-color: #fef9f9;
 }
 
-.navUl {
-  list-style: none;
-    display: inline-flex;
+.navUl { 
+  list-style: none; 
+    display: inline-flex; 
+ 
+}  
 
-}
-
-.navLink {
+.navLink { 
     text-decoration: none;
 }
-
+ 
 .navLi {
-  display: flex;
-  border-right: 2px solid black;
+  display: flex;  
+  border-right: 2px solid black; 
   padding: 10px;
-}
+} 
 
 .navLi:last-child { 
   border-right: none;
-}
+}                                      

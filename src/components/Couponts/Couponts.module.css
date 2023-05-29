@@ -1,80 +1,38 @@
 .container {
   display: flex;
-  flex-direction: column;
   /* gap: 2%; */
 
   margin: 0 auto; 
   width: auto;
-  padding: 2%;  
+  height: 600px;
+  padding: 2%; 
  
-  background-color: #f6d6d6;  
-}     
-             
-.containerShop { 
-  display: flex;     
-  flex-direction: column;  
-  align-items: center;  
-  width: auto;  
-  height: 140px; 
-  border: 2px solid black;
-  padding: 2%;
-}
-
-.containerOrders {  
-  display: flex;
-  flex-direction: column;
-  width: auto;
-  border: 2px solid black; 
-  padding: 2%;
-  height: 350px;
-  overflow-y: scroll; 
-}
+  background-color: #f6d6d6; 
+  overflow-y: scroll;
+}                   
+            
  
-.shopUl {
-  display: flex;
-  flex-direction: column;  
-  align-items: center;
-  gap: 8px; 
-  margin: 0; 
-  padding: 0; 
-  list-style: none;
-  display: inline-flex;
-} 
-
-.productUl {
+.shopUl { 
   display: flex;
   flex-wrap: wrap; 
-  gap: 8px;
-  margin: 0; 
-  padding: 0;
-  list-style: none;
-} 
-
-.buttonShop {
-  display: block;
-  width: 150px;
-  height: 50px;
-}
-
-
-
-.imgP {
-    width: 150px; 
-    height: auto;
-}
- 
-.divProduct {
+  gap: 8px;    
+  margin: 0;   
+  padding: 0; 
+  list-style: none; 
+  display: inline-flex;
+}       
+  
+.divDiskont {
   display:flex;
   flex-direction: column;
+  height: 100px;
+  width: 150px;
   padding: 4px;
   justify-content: center;
   align-items: center;
+    border: 1px solid black;
 }
  
-p {
-    margin: 0; 
-    padding: 0;
-}   
 
 .orderLi {
   display: flex;
@@ -128,7 +86,7 @@ p {
   padding: 0; 
   list-style: none;
 }  
-    
+               
 
 .formLi {  
   display: flex;
@@ -139,7 +97,7 @@ p {
   padding: 8px;
 
 }
-
+      
 .formLabel {
   display: flex;
   flex-direction: column;
@@ -154,4 +112,4 @@ p {
 
   width: 100%;
 
-}
+} 

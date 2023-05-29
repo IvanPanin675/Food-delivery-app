@@ -39,3 +39,17 @@ export const logout = createAsyncThunk(
     }
   }
 );
+
+export const findUserOp = createAsyncThunk(
+  'auth/user',
+  async (email, { rejectWithValue }) => {
+    try {
+      console.log("auOPER EMAIL GO:",email)
+      const data = await API.findUserAPI(email);
+      console.log("auOPER DATA come :",email)
+      return data;
+    } catch ({ response }) {
+      return rejectWithValue(response);
+    }
+  }
+);

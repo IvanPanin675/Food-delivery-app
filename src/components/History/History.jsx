@@ -25,8 +25,26 @@ const History = () => {
     const fetchOrders = async () => {
       try {
         setLoading(true);
-        const data = await getAllOrders("jovanni.94.van@gmail.com");
-        setAllOrders([...data.data]);
+        // let search = undefined
+        if (email && phone) {
+          const data = await getAllOrders({
+            owner: email,
+            customerPhone: phone,
+          });
+          setAllOrders([...data.data]);
+        }
+        if (email && !phone) {
+          const data = await getAllOrders({
+            owner: email
+          });
+          setAllOrders([...data.data]);
+        }
+        if (!email && phone) {
+          const data = await getAllOrders({
+            customerPhone: phone
+          });
+          setAllOrders([...data.data]);
+        }
       } catch (error) {
         console.log(error.message);
       } finally {
@@ -34,13 +52,13 @@ const History = () => {
       }
     };
     fetchOrders();
-  }, []);
+  }, [email, phone]);
 
   const orderItems = allOrders.map((order) => (
-    <li>
-      <ul>
+    <li className={styles.orderLi} key={order._id}>
+      <ul className={styles.productsContainerOrder}>
         {order.products.map((product) => (
-          <li>
+          <li className={styles.productLi} key={product._id}>
             <div
               className={styles.imgP}
               style={{
@@ -50,10 +68,22 @@ const History = () => {
                 backgroundPosition: "center",
               }}
             ></div>
+            <div className={styles.divProduct}>
+              <p>{product.nameProduct}</p>
+              <p>Price: {product.price}</p>
+              <p>
+                Price for {product.quantity} pcs becomes{" "}
+                {product.quantity * product.price}
+              </p>
+            </div>
           </li>
         ))}
       </ul>
-      <div><p>{order.priceAll}</p></div>
+      <div className={styles.divOrder}>
+        <p>Shop: {order.shop}</p>
+        <p>Total price: {order.priceAll} $</p>
+        <p>about {order.products.length} products</p>
+      </div>
     </li>
   ));
 
@@ -91,9 +121,8 @@ const History = () => {
           </li>
         </ul>
       </div>
-      <div className={styles.containerOrders}>
-        <ul>{orderItems}</ul>
-      </div>
+
+      {loading || <ul className={styles.containerOrders}>{orderItems}</ul>}
     </div>
   );
 };

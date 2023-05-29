@@ -9,7 +9,7 @@ export default function Header() {
           <li className={styles.navLi}><NavLink className={styles.navLink} to="/shop">Shop</NavLink></li>
           <li className={styles.navLi}><NavLink className={styles.navLink} to="/shopping">Shopping Cart</NavLink></li>
           <li className={styles.navLi}><NavLink className={styles.navLink} to="/history">History</NavLink></li>
-          <li className={styles.navLi}>f</li>
+          <li className={styles.navLi}><NavLink className={styles.navLink} to="/couponts">Couponts</NavLink></li>
         </ul>
       </nav>
     </header>

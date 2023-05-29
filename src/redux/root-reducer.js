@@ -7,6 +7,8 @@ import authReducer from './auth/authSlice';
 import shopsReducer from './shopsSlice/shopsSlice';
 import productsSlice from './products/productsSlice';
 import ordersSlice from './orders/ordersSlice';
+import diskontsSlice from './diskonts/diskontsSlice';
+
 
 
 
@@ -23,4 +25,5 @@ export const rootReducer = combineReducers({
   shops: shopsReducer,
   products: productsSlice,
   orders: ordersSlice,
+  diskonts: diskontsSlice,
 });

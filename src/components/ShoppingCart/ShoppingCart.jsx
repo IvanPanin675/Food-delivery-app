@@ -10,11 +10,13 @@ import {
 import { orderProduct } from "../../redux/orders/ordersSelector";
 import { useNavigate } from "react-router-dom";
 import { addOrderOp } from "../../redux/orders/ordersOperations";
+import { setDiskont } from "../../redux/diskonts/diskontsSelector";
 
 const ShoppingCart = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const order = useSelector(orderProduct);
+  const diskont = useSelector(setDiskont);
 
   const [products, setProducts] = useState([]);
 
@@ -33,22 +35,53 @@ const ShoppingCart = () => {
 
   useEffect(() => {
     if (products.length !== 0) {
-      dispatch(
-        setPriceAll(
-          products
-            .map((product) => {
-              return product.price * product.quantity;
-            })
-            .reduce((acc, prod) => {
-              acc += prod;
-              return acc;
-            })
-        )
-      );
+      console.log(diskont.diskont);
+      if (diskont.diskont) {
+        dispatch(
+          setPriceAll(
+            products
+              .map((product) => {
+                return (
+                  ((product.price * product.quantity) / 100) *
+                  (100 - diskont.diskont)
+                );
+              })
+              .reduce((acc, prod) => {
+                acc += prod;
+                return acc;
+              })
+          )
+        );
+      } else {
+        dispatch(
+          setPriceAll(
+            products
+              .map((product) => {
+                return product.price * product.quantity;
+              })
+              .reduce((acc, prod) => {
+                acc += prod;
+                return acc;
+              })
+          )
+        );
+      }
     } else {
       dispatch(setPriceAll(0));
     }
   }, [handleChange]);
+
+  // useEffect(() => {
+  //   if (diskont.diskont) {
+  //     console.log("diskont diskont")
+  //     dispatch(
+  //       setPriceAll(
+  //         ((order.priceAll / 100) * (100 - diskont.diskont)).toFixed(2)
+  //       )
+  //     );
+  //   }
+  //   console.log(order)
+  // },[diskont.diskont])
 
   const productItems = products.map((product) => {
     return (
@@ -76,10 +109,20 @@ const ShoppingCart = () => {
               step="1"
               onChange={(e) => handleChange(e, product._id)}
             />
-            <p className={styles.productP}>
-              Price for {product.quantity} products:{" "}
-              {product.price * product.quantity} $
-            </p>
+            {diskont.diskont ? (
+              <p className={styles.productP}>
+                Price for {product.quantity} products with diskont{" "}
+                {diskont.diskont} %:{" "}
+                {((product.price * product.quantity) / 100) *
+                  (100 - diskont.diskont)}{" "}
+                $
+              </p>
+            ) : (
+              <p className={styles.productP}>
+                Price for {product.quantity} products:{" "}
+                {product.price * product.quantity} $
+              </p>
+            )}
           </label>
         </div>
       </li>
@@ -109,6 +152,16 @@ const ShoppingCart = () => {
     e.preventDefault();
 
     dispatch(addOrderOp(order));
+
+    dispatch(
+      setCustumer({
+        customerName: "",
+        customerPhone: "",
+        owner: "",
+        customerLocation: "",
+      })
+    );
+    navigate("/shop");
   };
 
   return (
@@ -116,20 +169,6 @@ const ShoppingCart = () => {
       <div className={styles.containerShop}>
         <div></div>
         <ul className={styles.productUl}>
-          <li className={styles.formLi}>
-            <label className={styles.formLabel}>
-              Address:
-              <input
-                className={styles.formInput}
-                type="text"
-                name="customerLocation"
-                placeholder="Address"
-                value={order.customerLocation}
-                onChange={onHandleChange}
-                required
-              />
-            </label>
-          </li>
           <li className={styles.formLi}>
             <label className={styles.formLabel}>
               Email:
@@ -144,6 +183,21 @@ const ShoppingCart = () => {
               />
             </label>
           </li>
+          <li className={styles.formLi}>
+            <label className={styles.formLabel}>
+              Address:
+              <input
+                className={styles.formInput}
+                type="text"
+                name="customerLocation"
+                placeholder="Address"
+                value={order.customerLocation}
+                onChange={onHandleChange}
+                required
+              />
+            </label>
+          </li>
+
           <li className={styles.formLi}>
             <label className={styles.formLabel}>
               Phone:
@@ -176,11 +230,19 @@ const ShoppingCart = () => {
       </div>
       <div className={styles.containerProductAndSubmit}>
         <div className={styles.containerProduct}>
-          <ul className={styles.productUl}>{productItems}</ul>
+          {products && <ul className={styles.productUl}>{productItems}</ul>}
         </div>
         <div>
-          <p>Total price: {order.priceAll} $</p>
-          <button>Captcha</button>
+          {diskont.diskont ? (
+            <p>
+              Total price with diskont {diskont.diskont} %:{" "}
+              {order.priceAll} $
+            </p>
+          ) : (
+            <p>Total price: {order.priceAll} $</p>
+          )}
+
+          <button type="button" onClick={()=>navigate("/couponts")}>Coupons</button>
           <button>Submit</button>
         </div>
       </div>

@@ -9,32 +9,46 @@ import styles from "./Shops.module.css";
 import {
   deleteProducts,
   setProducts,
+  setProductsLocal,
   setShop,
 } from "../../redux/orders/ordersSlice";
 import { orderProduct } from "../../redux/orders/ordersSelector";
 
 const Shops = () => {
+  const dispatch = useDispatch();
   const [selectedShop, setSelectedShop] = useState(null);
   const [takedProduct, setTakedProduct] = useState([]);
 
-  const { products: oProducts } = useSelector(orderProduct);
-
-
-  const dispatch = useDispatch();
-  const shops = useSelector(selectAllShops);
-  const products = useSelector(selectProducts);
-
   useEffect(() => {
+    if (
+      localStorage.getItem("products") !== null &&
+      localStorage.getItem("products").length !== 0
+    ) {
+      const localProduct = JSON.parse(localStorage.getItem("products"));
+      const localSop = localStorage.getItem("shop");
+      const localSopName = localStorage.getItem("shopName");
+      dispatch(setProductsLocal(localProduct));
+      dispatch(setShop(localSopName));
+
+      setSelectedShop(localSop);
+      setTakedProduct([...localProduct.map((oPro) => oPro._id)]);
+    }
     if (shops.length === 0) {
       dispatch(fetchAllShops());
     }
+    
   }, [dispatch]);
+  const { products: oProducts } = useSelector(orderProduct);
+
+  const shops = useSelector(selectAllShops);
+  const products = useSelector(selectProducts);
 
   useEffect(() => {
     if (oProducts.length === 0) {
       dispatch(fetchProducts(selectedShop));
     } else {
-      setTakedProduct([...oProducts.map(oPro => oPro._id)])
+      dispatch(fetchProducts(selectedShop));
+      setTakedProduct([...oProducts.map((oPro) => oPro._id)]);
     }
   }, [selectedShop, dispatch]);
 
@@ -46,6 +60,7 @@ const Shops = () => {
           onClick={() => {
             dispatch(setShop(shop.name));
             setSelectedShop(shop._id);
+            localStorage.setItem("shop", shop._id);
           }}
         >
           {shop.name}
@@ -85,7 +100,7 @@ const Shops = () => {
             className={styles.productBtn}
             onClick={() => handlDeleteProd(product)}
           >
-            Delete
+            Delete in Cart
           </button>
         ) : (
           <button
@@ -94,7 +109,7 @@ const Shops = () => {
               handlTakeProd(product);
             }}
           >
-            Add
+            Add to Cart
           </button>
         )}
       </li>
@@ -108,7 +123,12 @@ const Shops = () => {
         {shopItem && takedProduct.length === 0 && (
           <ul className={styles.shopUl}>{shopItem}</ul>
         )}
-        {takedProduct.length === 0 || <p>You have selected a store. If you want another store - click delete on the product</p>}
+        {takedProduct.length === 0 || (
+          <p>
+            You have selected a store. If you want another store - click delete
+            on the product
+          </p>
+        )}
       </div>
       <div className={styles.containerProduct}>
         <p>Products:</p>
